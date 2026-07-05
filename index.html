@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GigaPulze Uppstrom Tech | Architecture & Service Tiers</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --bg-deep: #03030a;
+            --bg-space: radial-gradient(circle at 50% 50%, #0c0721 0%, #03030a 100%);
+            --accent-cyan: #00f2ff;
+            --accent-magenta: #ff007f;
+            --gradient-vibrant: linear-gradient(135deg, #00f2ff 0%, #ff007f 100%);
+            --glow-cyan: rgba(0, 242, 255, 0.3);
+            --glow-magenta: rgba(255, 0, 127, 0.3);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(12, 7, 33, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --font-sans: 'Space Grotesk', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-deep);
+            background: var(--bg-space);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- KINETIC MATRIX BACKGROUND --- */
+        .bg-matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 127, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position: center;
+            z-index: -1;
+            transform: perspective(600px) rotateX(65deg) translateY(-20%) scale(2.2);
+            animation: flowStream 25s linear infinite;
+        }
+
+        @keyframes flowStream {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        /* --- UTILITIES --- */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .mono-tag {
+            font-family: var(--font-mono);
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2.5rem;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-vibrant {
+            background: var(--gradient-vibrant);
+            color: #03030a;
+            box-shadow: 0 4px 20px var(--glow-magenta);
+            border: none;
+        }
+
+        .btn-vibrant:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 242, 255, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(8px);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 255, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px var(--glow-cyan);
+        }
+
+        section {
+            padding: 9rem 0;
+            position: relative;
+        }
+
+        /* --- HEADER & LOGO --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(3, 3, 10, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 90px;
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+
+        .logo-svg {
+            width: 42px;
+            height: 42px;
+        }
+
+        .logo-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-sans);
+        }
+
+        .logo-main {
+            font-weight: 700;
+            font-size: 1.3rem;
+            line-height: 1;
+            letter-spacing: 1.5px;
+            color: var(--text-main);
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px var(--glow-cyan);
+        }
+
+        .menu-toggle { display: none; cursor: pointer; flex-direction: column; gap: 6px; }
+        .menu-toggle span { display: block; width: 25px; height: 2px; background: var(--text-main); transition: var(--transition); }
+        #menu-checkbox { display: none; }
+
+        /* --- HERO / GEOMETRY OF FLEXIBILITY --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 90px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.12fr 0.88fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1.5px;
+        }
+
+        .hero-content h1 span {
+            background: var(--gradient-vibrant);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 620px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .kinetic-conduit-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            background: rgba(255, 255, 255, 0.01);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .kinetic-conduit-container::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: radial-gradient(circle, rgba(255,0,127,0.12) 0%, transparent 65%);
+            animation: pulseGlow 6s ease-in-out infinite;
+        }
+
+        .pulse-dynamic-mark {
+            width: 180px;
+            height: 180px;
+            filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.4));
+            animation: floatLogo 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.15); opacity: 0.9; }
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        /* --- NEW COPIED AND ENHANCED SERVICE TIERS SECTION --- */
+        .solutions {
+            background: rgba(3, 3, 10, 0.6);
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            letter-spacing: -0.5px;
+            max-width: 900px;
+            margin: 0 auto;
+            line-height: 1.2;
+        }
+
+        .section-header h2 span {
+            background: var(--gradient-vibrant);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .matrix-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            padding: 3.5rem 2.5rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .matrix-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-vibrant);
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .matrix-card.featured-tier {
+            border-color: rgba(0, 242, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 242, 255, 0.05);
+        }
+
+        .matrix-card.featured-tier::after {
+            opacity: 1;
+        }
+
+        .matrix-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 242, 255, 0.08);
+        }
+
+        .matrix-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-vibrant);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .matrix-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .tier-meta {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .matrix-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        /* Deep Dive & Rigor Breakdown */
+        .engineering-deep-dive {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 4rem;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .engineering-deep-dive::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: radial-gradient(circle at 100% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .deep-dive-grid {
+            display: grid;
+            grid-template-columns: 0.3fr 0.7fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .deep-dive-title h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+
+        .deep-dive-title h4 span {
+            color: var(--accent-magenta);
+        }
+
+        .deep-dive-body p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .why-us-bridge {
+            text-align: center;
+            margin-top: 5rem;
+            padding: 2rem;
+            border-top: 1px dashed var(--glass-border);
+        }
+
+        .why-us-bridge p {
+            font-family: var(--font-sans);
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text-main);
+            letter-spacing: -0.2px;
+        }
+
+        .why-us-bridge p span {
+            background: var(--gradient-vibrant);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        /* --- 4. DISPATCH GATEWAY --- */
+        .dispatch {
+            background: #020207;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .dispatch-grid {
+            display: grid;
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: 5rem;
+        }
+
+        .dispatch-info h2 {
+            font-size: 3rem;
+            line-height: 1.15;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .dispatch-info p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-row .form-group { margin-bottom: 0; }
+
+        label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.1rem;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-magenta);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.15);
+        }
+
+        /* --- FUTURISTIC FOOTER --- */
+        footer {
+            border-top: 1px solid var(--glass-border);
+            padding: 6rem 0 3rem;
+            background: #010104;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.4fr repeat(3, 1fr);
+            gap: 5rem;
+            margin-bottom: 5rem;
+        }
+
+        .footer-brand p {
+            color: var(--text-muted);
+            margin-top: 1.25rem;
+            max-width: 280px;
+            font-size: 0.95rem;
+        }
+
+        .footer-col h4 {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-main);
+            margin-bottom: 1.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.9rem;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent-cyan);
+            padding-left: 6px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding-top: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 1024px) {
+            .hero-grid, .dispatch-grid {
+                grid-template-columns: 1fr;
+                gap: 5rem;
+            }
+
+            .hero-visual { order: -1; }
+            .matrix-grid { grid-template-columns: repeat(2, 1fr); }
+            .deep-dive-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .matrix-grid, .footer-grid, .form-row { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 2.8rem; }
+            .section-header h2 { font-size: 2rem; }
+            .engineering-deep-dive { padding: 2rem; }
+            .menu-toggle { display: flex; z-index: 1001; }
+            
+            .nav-menu {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 85%;
+                max-width: 320px;
+                height: 100vh;
+                background: rgba(3, 3, 10, 0.98);
+                backdrop-filter: blur(24px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3.5rem;
+                transition: var(--transition);
+                border-left: 1px solid var(--glass-border);
+            }
+
+            #menu-checkbox:checked ~ .nav-menu { right: 0; }
+            #menu-checkbox:checked ~ .menu-toggle span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+            #menu-checkbox:checked ~ .menu-toggle span:nth-child(2) { opacity: 0; }
+            #menu-checkbox:checked ~ .menu-toggle span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Kinetic Mesh Layer -->
+    <div class="bg-matrix"></div>
+
+    <!-- 1. HEADER / NAVBAR WITH INTEGRATED TOP-LEFT LOGO -->
+    <header class="header">
+        <div class="container navbar">
+            <a href="#" class="logo-group">
+                <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 45V65H35V35H50V75H65V35H80V55H95" stroke="url(#logo-grad)" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter"/>
+                    <path d="M15 45V65H35V35H50V75H65V35H80V55H95" stroke="#ffffff" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" opacity="0.8"/>
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00f2ff" />
+                            <stop offset="100%" stop-color="#ff007f" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="logo-text-wrapper">
+                    <span class="logo-main">GIGAPULZE</span>
+                    <span class="logo-sub">Uppstrom Tech</span>
+                </div>
+            </a>
+            
+            <input type="checkbox" id="menu-checkbox">
+            <label for="menu-checkbox" class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link">Geometry</a></li>
+                <li><a href="#services" class="nav-link active">Services</a></li>
+                <li><a href="#dispatch" class="nav-link">Dispatch</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- 2. HERO SECTION: DISPLAYING THE GEOMETRY OF FLEXIBILITY -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <span class="mono-tag">// Dynamic Partner Infrastructure</span>
+                    <h1>The Geometry of <span>Flexibility</span></h1>
+                    <p>We build adaptable, high-frequency digital conduits tailored to frame your enterprise. Partnering with GigaPulze Uppstrom Tech means mapping seamless, infinite data scalability directly into your operational core.</p>
+                    <div class="hero-actions">
+                        <a href="#services" class="btn btn-vibrant"><i class="fa-solid fa-layer-group"></i> View Service Matrix</a>
+                        <a href="#dispatch" class="btn btn-outline">Establish Synergy</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="kinetic-conduit-container">
+                        <svg class="pulse-dynamic-mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 45V70H32V30H50V80H68V30H86V55H100" stroke="url(#hero-grad)" stroke-width="12" stroke-linecap="square" stroke-linejoin="miter"/>
+                            <path d="M10 45V70H32V30H50V80H68V30H86V55H100" stroke="#ffffff" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" opacity="0.9"/>
+                            <defs>
+                                <linearGradient id="hero-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00f2ff" />
+                                    <stop offset="50%" stop-color="#bc00dd" />
+                                    <stop offset="100%" stop-color="#ff007f" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. COMPREHENSIVE TIERS SECTION -->
+        <section id="services" class="solutions">
+            <div class="container">
+                <!-- Hook & Philosophy -->
+                <div class="section-header">
+                    <span class="mono-tag">// Operational Framework</span>
+                    <h2>Architectural Foundations Demanding <span>Uncompromising Performance</span></h2>
+                </div>
+                
+                <!-- The Tiered Grid -->
+                <div class="matrix-grid">
+                    <!-- Tier 1 -->
+                    <div class="matrix-card">
+                        <div class="matrix-icon"><i class="fa-solid fa-house-laptop"></i></div>
+                        <h3>Tier 1: Home / SOHO</h3>
+                        <span class="tier-meta">Edge Deployment</span>
+                        <p>Establish a hardened perimeter for remote environments with a streamlined, resilient home network setup. We optimize basic wireless infrastructure to fully eliminate connectivity dead zones and signal degradation. Integrated endpoint antivirus agents deliver continuous threat mitigation directly to your hardware layer.</p>
+                    </div>
+                    <!-- Tier 2 -->
+                    <div class="matrix-card">
+                        <div class="matrix-icon"><i class="fa-solid fa-network-wired"></i></div>
+                        <h3>Tier 2: SMB</h3>
+                        <span class="tier-meta">Core Infrastructure</span>
+                        <p>Take absolute control of intra-network pipelines with a highly redundant Switch and Routing Core configuration. We deploy advanced Next-Generation Firewalls (NGFW) to enforce granular, layer-7 traffic visualization and control. This unified threat management array intercepts malicious payloads before they hit internal storage sectors.</p>
+                    </div>
+                    <!-- Tier 3 -->
+                    <div class="matrix-card featured-tier">
+                        <div class="matrix-icon"><i class="fa-solid fa-cloud-binary"></i></div>
+                        <h3>Tier 3: Enterprise</h3>
+                        <span class="tier-meta">Mission Critical</span>
+                        <p>Orchestrate elastic, cloud-native deployments across AWS, Azure, and Kubernetes clusters with automated scalability. Operational resilience is backed by a non-stop Security Operations Center (SOC) and Managed Detection and Response (MDR) matrix. This Zero-Trust Engineered Architecture handles extreme data throughput while securing ultra-low latency profiles.</p>
+                    </div>
+                </div>
+
+                <!-- The Engineering Deep-Dive -->
+                <div class="engineering-deep-dive">
+                    <div class="deep-dive-grid">
+                        <div class="deep-dive-title">
+                            <h4>What <span>Engineered Architecture</span> Means to a CTO</h4>
+                        </div>
+                        <div class="deep-dive-body">
+                            <p>True engineering sovereignty requires a unified blueprint where separate systems operate as one coordinated mechanism. By merging elastic Cloud-native environments with high-capacity Next-Generation Firewalls and a ruggedized Routing Core, we build an infrastructure that is secure by default and flexible by design. This end-to-end integration stops defensive bottlenecks at the perimeter, keeping packet transit clean, tracking analytics transparent, and ensuring deep technical resilience from edge to cloud.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The "Why Us" Hook -->
+                <div class="why-us-bridge">
+                    <p>Whether anchoring a <span>simple home solution</span> or defending a <span>global enterprise security perimeter</span>, the exact same mathematical precision and elite engineering rigor shield your network.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. DISPATCH GATEWAY -->
+        <section id="dispatch" class="dispatch">
+            <div class="container dispatch-grid">
+                <div class="dispatch-info">
+                    <span class="mono-tag">// Portal Initialization</span>
+                    <h2>Initialize Upstream Alliance</h2>
+                    <p>Transmit your architectural requirements directly into our active engineering matrix. Let's form an unbeatable structural partnership.</p>
+                </div>
+                <form class="dispatch-form" action="#" method="POST" onsubmit="event.preventDefault();">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Identity Designation</label>
+                            <input type="text" id="name" required placeholder="e.g. Director of Infrastructure">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Secure Endpoint Email</label>
+                            <input type="email" id="email" required placeholder="name@enterprise.com">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp">Comms Node (Whatsapp)</label>
+                        <input type="text" id="whatsapp" placeholder="@username or Mobile Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Structural Overview</label>
+                        <textarea id="message" rows="5" required placeholder="Describe your architecture and scaling bottlenecks..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-vibrant" style="width: 100%; justify-content: center;">
+                        <i class="fa-solid fa-paper-plane"></i> Activate Conduit Partnership
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- 7. FOOTER -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo-group">
+                    <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 45V65H35V35H50V75H65V35H80V55H95" stroke="url(#logo-grad-foot)" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter"/>
+                        <defs>
+                            <linearGradient id="logo-grad-foot" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00f2ff" />
+                                <stop offset="100%" stop-color="#ff007f" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="logo-text-wrapper">
+                        <span class="logo-main">GIGAPULZE</span>
+                        <span class="logo-sub">Uppstrom Tech</span>
+                    </div>
+                </a>
+                <p>Dynamic geometric networks built for high-performance enterprise realities.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Ecosystem</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Flexible Conduits</a></li>
+                    <li><a href="#">Pulse Analytics</a></li>
+                    <li><a href="#">Matrix Firewalls</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Alliance</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Geometry Logs</a></li>
+                    <li><a href="#">Upstream Architecture</a></li>
+                    <li><a href="#">SLA Specifications</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Matrix Nodes</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fa-brands fa-github"></i> GitHub Core</a></li>
+                    <li><a href="#"><i class="fa-brands fa-linkedin"></i> LinkedIn Gateway</a></li>
+                    <li><a href="#"><i class="fa-brands fa-x-twitter"></i> X Conduits</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>&copy; 2026 GigaPulze Uppstrom Tech. Secure Stream Terminated.</p>
+            <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-magenta);"></p>
+        </div>
+    </footer>
+</body>
+</html>
