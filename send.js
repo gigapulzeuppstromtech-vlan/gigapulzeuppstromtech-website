@@ -25,9 +25,9 @@ module.exports = async (req, res) => {
   }
 
   // Retrieve SMTP credentials from environment variables
-  const gmailUser = process.env.GMAIL_USER;
-  const gmailPass = process.env.GMAIL_APP_PASSWORD;
-  const recipientEmail = process.env.TO_EMAIL || gmailUser;
+  const gmailUser = process.env.gigapulze.uppstrom.tech@gmail.com;
+  const gmailPass = process.env.refh hpak leyl exgo;
+  const recipientEmail = process.env.gigapulze.uppstrom.tech@gmail.com || gmailUser;
 
   if (!gmailUser || !gmailPass) {
     return res.status(500).json({ error: 'Server misconfiguration: missing email credentials.' });
