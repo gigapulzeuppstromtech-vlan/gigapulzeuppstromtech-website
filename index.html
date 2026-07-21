@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GigaPulze Uppstrom Tech | Architecture & Service Tiers</title>
+    
+    <!-- Tab Bar Display Icon (Website Logo Favicon) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='logo-grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='%2300f2ff'/><stop offset='100%' stop-color='%23ff007f'/></linearGradient></defs><path d='M15 45V65H35V35H50V75H65V35H80V55H95' stroke='url(%23logo-grad)' stroke-width='10' stroke-linecap='square' stroke-linejoin='miter'/><path d='M15 45V65H35V35H50V75H65V35H80V55H95' stroke='%23ffffff' stroke-width='2' stroke-linecap='square' stroke-linejoin='miter' opacity='0.8'/></svg>">
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +18,6 @@
     <style>
         /* --- RESET & VARIABLES --- */
         :root {
-            /* Dark Theme Default */
             --bg-deep: #03030a;
             --bg-space: radial-gradient(circle at 50% 50%, #0c0721 0%, #03030a 100%);
             --accent-cyan: #00f2ff;
@@ -33,7 +36,6 @@
             --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Light Theme Variable Overrides */
         [data-theme="light"] {
             --bg-deep: #f1f5f9;
             --bg-space: radial-gradient(circle at 50% 50%, #ffffff 0%, #e2e8f0 100%);
@@ -45,16 +47,8 @@
             --card-hover-shadow: rgba(255, 0, 127, 0.12);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
         body {
             font-family: var(--font-sans);
             background: var(--bg-deep);
@@ -65,13 +59,10 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        /* --- KINETIC MATRIX BACKGROUND --- */
         .bg-matrix {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background-image: 
                 linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(255, 0, 127, 0.03) 1px, transparent 1px);
@@ -87,14 +78,7 @@
             100% { background-position: 0 100%; }
         }
 
-        /* --- UTILITIES --- */
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
         .mono-tag {
             font-family: var(--font-mono);
             background: linear-gradient(90deg, var(--accent-cyan), var(--accent-magenta));
@@ -148,17 +132,10 @@
             box-shadow: 0 4px 15px var(--glow-cyan);
         }
 
-        section {
-            padding: 8rem 0;
-            position: relative;
-        }
+        section { padding: 8rem 0; position: relative; }
 
-        /* --- HEADER & LOGO --- */
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+            position: fixed; top: 0; left: 0; width: 100%;
             background: var(--header-bg);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--glass-border);
@@ -166,75 +143,18 @@
             transition: background 0.4s ease;
         }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 90px;
-        }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: 90px; }
+        .logo-group { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .logo-svg { width: 42px; height: 42px; }
+        .logo-text-wrapper { display: flex; flex-direction: column; font-family: var(--font-sans); }
+        .logo-main { font-weight: 700; font-size: 1.3rem; line-height: 1; letter-spacing: 1.5px; color: var(--text-main); }
+        .logo-sub { font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); letter-spacing: 2px; margin-top: 2px; text-transform: uppercase; }
 
-        .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
+        .nav-right-container { display: flex; align-items: center; gap: 2rem; }
+        .nav-menu { display: flex; gap: 2.5rem; list-style: none; }
+        .nav-link { color: var(--text-muted); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: var(--transition); letter-spacing: 0.5px; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-cyan); text-shadow: 0 0 10px var(--glow-cyan); }
 
-        .logo-svg {
-            width: 42px;
-            height: 42px;
-        }
-
-        .logo-text-wrapper {
-            display: flex;
-            flex-direction: column;
-            font-family: var(--font-sans);
-        }
-
-        .logo-main {
-            font-weight: 700;
-            font-size: 1.3rem;
-            line-height: 1;
-            letter-spacing: 1.5px;
-            color: var(--text-main);
-        }
-
-        .logo-sub {
-            font-size: 0.7rem;
-            font-family: var(--font-mono);
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            margin-top: 2px;
-            text-transform: uppercase;
-        }
-
-        .nav-right-container {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 2.5rem;
-            list-style: none;
-        }
-
-        .nav-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: var(--transition);
-            letter-spacing: 0.5px;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: var(--accent-cyan);
-            text-shadow: 0 0 10px var(--glow-cyan);
-        }
-
-        /* Theme Toggle Button */
         .theme-toggle {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
@@ -242,451 +162,115 @@
             padding: 0.6rem 1rem;
             border-radius: 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-family: var(--font-mono); font-size: 0.85rem;
             transition: var(--transition);
         }
 
-        .theme-toggle:hover {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px var(--glow-cyan);
-        }
-
+        .theme-toggle:hover { border-color: var(--accent-cyan); box-shadow: 0 0 10px var(--glow-cyan); }
         .menu-toggle { display: none; cursor: pointer; flex-direction: column; gap: 6px; }
         .menu-toggle span { display: block; width: 25px; height: 2px; background: var(--text-main); transition: var(--transition); }
         #menu-checkbox { display: none; }
 
-        /* --- HERO SECTION --- */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding-top: 90px;
-        }
+        .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 90px; }
+        .hero-grid { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 5rem; align-items: center; }
+        .hero-content h1 { font-size: 4rem; line-height: 1.1; font-weight: 700; margin-bottom: 1.5rem; letter-spacing: -1.5px; }
+        .hero-content h1 span { background: var(--gradient-vibrant); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-content p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem; max-width: 620px; }
+        .hero-actions { display: flex; gap: 1.5rem; }
 
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1.12fr 0.88fr;
-            gap: 5rem;
-            align-items: center;
-        }
-
-        .hero-content h1 {
-            font-size: 4rem;
-            line-height: 1.1;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1.5px;
-        }
-
-        .hero-content h1 span {
-            background: var(--gradient-vibrant);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-content p {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            margin-bottom: 3rem;
-            max-width: 620px;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .hero-visual {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
         .kinetic-conduit-container {
-            position: relative;
-            width: 350px;
-            height: 350px;
-            background: var(--glass-bg);
-            border-radius: 24px;
+            position: relative; width: 350px; height: 350px;
+            background: var(--glass-bg); border-radius: 24px;
             border: 1px solid var(--glass-border);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3); overflow: hidden;
         }
 
         .kinetic-conduit-container::before {
-            content: '';
-            position: absolute;
-            width: 150%;
-            height: 150%;
+            content: ''; position: absolute; width: 150%; height: 150%;
             background: radial-gradient(circle, rgba(255,0,127,0.12) 0%, transparent 65%);
             animation: pulseGlow 6s ease-in-out infinite;
         }
 
-        .pulse-dynamic-mark {
-            width: 180px;
-            height: 180px;
-            filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.4));
-            animation: floatLogo 4s ease-in-out infinite;
-        }
+        .pulse-dynamic-mark { width: 180px; height: 180px; filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.4)); animation: floatLogo 4s ease-in-out infinite; }
 
-        @keyframes pulseGlow {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.15); opacity: 0.9; }
-        }
+        @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 0.9; } }
+        @keyframes floatLogo { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-10px) rotate(1deg); } }
 
-        @keyframes floatLogo {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(1deg); }
-        }
+        .solutions { background: var(--glass-bg); border-top: 1px solid var(--glass-border); }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 2.8rem; letter-spacing: -0.5px; max-width: 900px; margin: 0 auto; line-height: 1.2; }
+        .section-header h2 span { background: var(--gradient-vibrant); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-        /* --- SERVICE TIERS SECTION --- */
-        .solutions {
-            background: var(--glass-bg);
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-header h2 {
-            font-size: 2.8rem;
-            letter-spacing: -0.5px;
-            max-width: 900px;
-            margin: 0 auto;
-            line-height: 1.2;
-        }
-
-        .section-header h2 span {
-            background: var(--gradient-vibrant);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2.5rem;
-            margin-bottom: 5rem;
-        }
-
+        .matrix-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-bottom: 5rem; }
         .matrix-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(12px);
-            padding: 3.5rem 2.5rem;
-            border-radius: 12px;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px); padding: 3.5rem 2.5rem; border-radius: 12px;
+            transition: var(--transition); position: relative; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        .matrix-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background: var(--gradient-vibrant);
-            opacity: 0;
-            transition: var(--transition);
-        }
+        .matrix-card::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--gradient-vibrant); opacity: 0; transition: var(--transition); }
+        .matrix-card.featured-tier { border-color: rgba(0, 242, 255, 0.4); box-shadow: 0 15px 35px rgba(0, 242, 255, 0.05); }
+        .matrix-card.featured-tier::after { opacity: 1; }
+        .matrix-card:hover { transform: translateY(-8px); border-color: rgba(255, 0, 127, 0.3); box-shadow: 0 20px 40px var(--card-hover-shadow); }
 
-        .matrix-card.featured-tier {
-            border-color: rgba(0, 242, 255, 0.4);
-            box-shadow: 0 15px 35px rgba(0, 242, 255, 0.05);
-        }
+        .matrix-icon { font-size: 2.5rem; margin-bottom: 1.5rem; background: var(--gradient-vibrant); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
+        .matrix-card h3 { font-size: 1.6rem; margin-bottom: 0.5rem; font-weight: 700; }
+        .tier-meta { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem; display: block; }
+        .matrix-card p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; }
 
-        .matrix-card.featured-tier::after {
-            opacity: 1;
-        }
+        .engineering-deep-dive { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 4rem; margin-top: 4rem; position: relative; overflow: hidden; }
+        .deep-dive-grid { display: grid; grid-template-columns: 0.3fr 0.7fr; gap: 3rem; align-items: center; }
+        .deep-dive-title h4 { font-size: 1.5rem; font-weight: 700; line-height: 1.3; letter-spacing: -0.5px; }
+        .deep-dive-title h4 span { color: var(--accent-magenta); }
+        .deep-dive-body p { color: var(--text-muted); font-size: 1.1rem; line-height: 1.7; }
 
-        .matrix-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(255, 0, 127, 0.3);
-            box-shadow: 0 20px 40px var(--card-hover-shadow);
-        }
+        .why-us-bridge { text-align: center; margin-top: 5rem; padding: 2rem; border-top: 1px dashed var(--glass-border); }
+        .why-us-bridge p { font-family: var(--font-sans); font-size: 1.3rem; font-weight: 500; color: var(--text-main); letter-spacing: -0.2px; }
+        .why-us-bridge p span { background: var(--gradient-vibrant); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; }
 
-        .matrix-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            background: var(--gradient-vibrant);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
+        .partners { border-top: 1px solid var(--glass-border); padding: 6rem 0; background: rgba(0, 0, 0, 0.1); }
+        .partner-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2rem; align-items: center; margin-top: 3rem; }
+        .partner-box { background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2rem 1.5rem; border-radius: 12px; text-align: center; transition: var(--transition); }
+        .partner-box:hover { border-color: var(--accent-cyan); transform: translateY(-5px); }
+        .partner-box i { font-size: 2.5rem; color: var(--text-muted); margin-bottom: 0.75rem; transition: var(--transition); }
+        .partner-box:hover i { color: var(--accent-cyan); }
+        .partner-box span { display: block; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; }
 
-        .matrix-card h3 {
-            font-size: 1.6rem;
-            margin-bottom: 0.5rem;
-            font-weight: 700;
-        }
+        .dispatch { border-top: 1px solid var(--glass-border); }
+        .dispatch-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 5rem; }
+        .dispatch-info h2 { font-size: 3rem; line-height: 1.15; margin-bottom: 1.5rem; letter-spacing: -1px; }
+        .dispatch-info p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 3rem; }
 
-        .tier-meta {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--accent-cyan);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1.5rem;
-            display: block;
-        }
-
-        .matrix-card p {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            line-height: 1.6;
-        }
-
-        /* Engineering Deep-Dive */
-        .engineering-deep-dive {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 4rem;
-            margin-top: 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .deep-dive-grid {
-            display: grid;
-            grid-template-columns: 0.3fr 0.7fr;
-            gap: 3rem;
-            align-items: center;
-        }
-
-        .deep-dive-title h4 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-            letter-spacing: -0.5px;
-        }
-
-        .deep-dive-title h4 span {
-            color: var(--accent-magenta);
-        }
-
-        .deep-dive-body p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            line-height: 1.7;
-        }
-
-        .why-us-bridge {
-            text-align: center;
-            margin-top: 5rem;
-            padding: 2rem;
-            border-top: 1px dashed var(--glass-border);
-        }
-
-        .why-us-bridge p {
-            font-family: var(--font-sans);
-            font-size: 1.3rem;
-            font-weight: 500;
-            color: var(--text-main);
-            letter-spacing: -0.2px;
-        }
-
-        .why-us-bridge p span {
-            background: var(--gradient-vibrant);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-        }
-
-        /* --- PARTNER SECTION (STATIC PLACEHOLDER) --- */
-        .partners {
-            border-top: 1px solid var(--glass-border);
-            padding: 6rem 0;
-            background: rgba(0, 0, 0, 0.1);
-        }
-
-        .partner-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 2rem;
-            align-items: center;
-            margin-top: 3rem;
-        }
-
-        .partner-box {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 2rem 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .partner-box:hover {
-            border-color: var(--accent-cyan);
-            transform: translateY(-5px);
-        }
-
-        .partner-box i {
-            font-size: 2.5rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-            transition: var(--transition);
-        }
-
-        .partner-box:hover i {
-            color: var(--accent-cyan);
-        }
-
-        .partner-box span {
-            display: block;
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
-
-        /* --- DISPATCH GATEWAY / CONTACT FORM --- */
-        .dispatch {
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .dispatch-grid {
-            display: grid;
-            grid-template-columns: 0.9fr 1.1fr;
-            gap: 5rem;
-        }
-
-        .dispatch-info h2 {
-            font-size: 3rem;
-            line-height: 1.15;
-            margin-bottom: 1.5rem;
-            letter-spacing: -1px;
-        }
-
-        .dispatch-info p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 3rem;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-            position: relative;
-        }
-
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1.5rem; position: relative; }
         .form-row .form-group { margin-bottom: 0; }
 
-        label {
-            display: block;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
+        label { display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1.5px; }
         input, textarea {
-            width: 100%;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 1.1rem;
-            color: var(--text-main);
-            font-family: var(--font-sans);
-            font-size: 1rem;
-            border-radius: 8px;
-            transition: var(--transition);
+            width: 100%; background: var(--glass-bg); border: 1px solid var(--glass-border);
+            padding: 1.1rem; color: var(--text-main); font-family: var(--font-sans); font-size: 1rem;
+            border-radius: 8px; transition: var(--transition);
         }
 
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-magenta);
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.15);
-        }
-
-        #form-status {
-            margin-top: 1rem;
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            text-align: center;
-            min-height: 24px;
-        }
-
+        input:focus, textarea:focus { outline: none; border-color: var(--accent-magenta); box-shadow: 0 0 15px rgba(255, 0, 127, 0.15); }
+        #form-status { margin-top: 1rem; font-family: var(--font-mono); font-size: 0.9rem; text-align: center; min-height: 24px; }
         .status-success { color: #10b981; }
         .status-error { color: #ef4444; }
 
-        /* --- FOOTER --- */
-        footer {
-            border-top: 1px solid var(--glass-border);
-            padding: 6rem 0 3rem;
-            background: var(--glass-bg);
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 1.4fr repeat(3, 1fr);
-            gap: 5rem;
-            margin-bottom: 5rem;
-        }
-
-        .footer-brand p {
-            color: var(--text-muted);
-            margin-top: 1.25rem;
-            max-width: 280px;
-            font-size: 0.95rem;
-        }
-
-        .footer-col h4 {
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--text-main);
-            margin-bottom: 1.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
+        footer { border-top: 1px solid var(--glass-border); padding: 6rem 0 3rem; background: var(--glass-bg); }
+        .footer-grid { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 5rem; margin-bottom: 5rem; }
+        .footer-brand p { color: var(--text-muted); margin-top: 1.25rem; max-width: 280px; font-size: 0.95rem; }
+        .footer-col h4 { font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-main); margin-bottom: 1.75rem; text-transform: uppercase; letter-spacing: 2px; }
         .footer-links { list-style: none; }
         .footer-links li { margin-bottom: 0.9rem; }
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.95rem;
-        }
+        .footer-links a { color: var(--text-muted); text-decoration: none; transition: var(--transition); font-size: 0.95rem; }
+        .footer-links a:hover { color: var(--accent-cyan); padding-left: 6px; }
+        .footer-bottom { border-top: 1px solid var(--glass-border); padding-top: 2.5rem; display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 0.9rem; }
 
-        .footer-links a:hover {
-            color: var(--accent-cyan);
-            padding-left: 6px;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid var(--glass-border);
-            padding-top: 2.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* --- RESPONSIVE MEDIA QUERIES --- */
         @media (max-width: 1024px) {
             .hero-grid, .dispatch-grid { grid-template-columns: 1fr; gap: 4rem; }
             .hero-visual { order: -1; }
@@ -701,24 +285,14 @@
             .section-header h2 { font-size: 2rem; }
             .engineering-deep-dive { padding: 2rem; }
             .menu-toggle { display: flex; z-index: 1001; }
-            
             .nav-menu {
-                position: fixed;
-                top: 0;
-                right: -100%;
-                width: 85%;
-                max-width: 320px;
-                height: 100vh;
-                background: var(--bg-deep);
-                backdrop-filter: blur(24px);
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 3.5rem;
-                transition: var(--transition);
+                position: fixed; top: 0; right: -100%;
+                width: 85%; max-width: 320px; height: 100vh;
+                background: var(--bg-deep); backdrop-filter: blur(24px);
+                flex-direction: column; justify-content: center; align-items: center;
+                gap: 3.5rem; transition: var(--transition);
                 border-left: 1px solid var(--glass-border);
             }
-
             #menu-checkbox:checked ~ .nav-right-container .nav-menu { right: 0; }
             #menu-checkbox:checked ~ .menu-toggle span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
             #menu-checkbox:checked ~ .menu-toggle span:nth-child(2) { opacity: 0; }
@@ -728,10 +302,9 @@
 </head>
 <body>
 
-    <!-- Kinetic Mesh Layer -->
     <div class="bg-matrix"></div>
 
-    <!-- 1. HEADER / NAVBAR -->
+    <!-- HEADER / NAVBAR -->
     <header class="header">
         <div class="container navbar">
             <a href="#" class="logo-group">
@@ -766,7 +339,6 @@
                     <li><a href="#dispatch" class="nav-link">Dispatch</a></li>
                 </ul>
 
-                <!-- Theme Switcher Toggle -->
                 <button class="theme-toggle" id="themeToggleBtn" aria-label="Toggle Theme">
                     <i class="fa-solid fa-moon" id="themeIcon"></i>
                     <span id="themeText">Dark</span>
@@ -776,13 +348,13 @@
     </header>
 
     <main>
-        <!-- 2. HERO SECTION -->
+        <!-- HERO SECTION -->
         <section class="hero">
             <div class="container hero-grid">
                 <div class="hero-content">
                     <span class="mono-tag">Dynamic Partner Infrastructure</span>
                     <h1>The Geometry of <span>Flexibility</span></h1>
-                    <p>We build adaptable, high-frequency digital conduits tailored to frame your enterprise. Partnering with GigaPulze Uppstrom Tech means mapping seamless, infinite data scalability directly into your operational core. Expert-tier management, rapid remediation, and architecture consulting built specifically for switch arrays, next-generation firewalls, cloud environments, and robust cybersecurity stacks.</p>
+                    <p>We build adaptable, high-frequency digital conduits tailored to frame your enterprise. Partnering with GigaPulze Uppstrom Tech means mapping seamless, infinite data scalability directly into your operational core.</p>
                     <div class="hero-actions">
                         <a href="#services" class="btn btn-vibrant"><i class="fa-solid fa-layer-group"></i> View Services</a>
                         <a href="#dispatch" class="btn btn-outline">Establish Synergy</a>
@@ -806,7 +378,7 @@
             </div>
         </section>
 
-        <!-- 3. COMPREHENSIVE TIERS SECTION -->
+        <!-- SERVICES SECTION -->
         <section id="services" class="solutions">
             <div class="container">
                 <div class="section-header">
@@ -815,26 +387,23 @@
                 </div>
                 
                 <div class="matrix-grid">
-                    <!-- Tier 1 -->
                     <div class="matrix-card">
                         <div class="matrix-icon"><i class="fa-solid fa-house-laptop"></i></div>
                         <h3>Tier 1: Home / SOHO</h3>
                         <span class="tier-meta">Edge Deployment</span>
-                        <p>Establish a hardened perimeter for remote environments with a streamlined, resilient home network setup. Optimize wireless coverage and eliminate connectivity dead zones.</p>
+                        <p>Establish a hardened perimeter for remote environments with a streamlined home network setup.</p>
                     </div>
-                    <!-- Tier 2 -->
                     <div class="matrix-card">
                         <div class="matrix-icon"><i class="fa-solid fa-network-wired"></i></div>
                         <h3>Tier 2: SMB</h3>
                         <span class="tier-meta">Core Infrastructure</span>
-                        <p>Take absolute control of intra-network pipelines with redundant switch-routing cores and Next-Gen Firewalls (NGFW) enforcing layer-7 traffic visualization.</p>
+                        <p>Take absolute control with redundant switch-routing cores and Next-Gen Firewalls.</p>
                     </div>
-                    <!-- Tier 3 -->
                     <div class="matrix-card featured-tier">
                         <div class="matrix-icon"><i class="fa-solid fa-cloud-binary"></i></div>
                         <h3>Tier 3: Enterprise</h3>
                         <span class="tier-meta">Mission Critical</span>
-                        <p>Orchestrate elastic, cloud-native deployments across AWS, Azure, and Kubernetes clusters backed by Zero-Trust engineered architectures and 24/7 SOC detection.</p>
+                        <p>Orchestrate elastic deployments across AWS, Azure, and Kubernetes clusters with Zero-Trust protection.</p>
                     </div>
                 </div>
 
@@ -844,18 +413,18 @@
                             <h4>What <span>Engineered Architecture</span> Means to a CTO</h4>
                         </div>
                         <div class="deep-dive-body">
-                            <p>True engineering sovereignty requires a unified blueprint where separate systems operate as one coordinated mechanism. By merging elastic cloud environments with high-capacity firewalls, we build infrastructure secure by default and flexible by design.</p>
+                            <p>True engineering sovereignty requires a unified blueprint where separate systems operate as one coordinated mechanism.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="why-us-bridge">
-                    <p>Whether anchoring a <span>simple home solution</span> or defending a <span>global enterprise security perimeter</span>, the exact same mathematical precision shields your network.</p>
+                    <p>Whether anchoring a <span>simple home solution</span> or defending a <span>global enterprise security perimeter</span>, exact mathematical precision shields your network.</p>
                 </div>
             </div>
         </section>
 
-        <!-- 4. PARTNERS SECTION -->
+        <!-- PARTNERS SECTION -->
         <section id="partners" class="partners">
             <div class="container">
                 <div class="section-header">
@@ -863,37 +432,22 @@
                     <h2>Strategic <span>Technology Partners</span></h2>
                 </div>
                 <div class="partner-grid">
-                    <div class="partner-box">
-                        <i class="fa-brands fa-aws"></i>
-                        <span>AWS CLOUD</span>
-                    </div>
-                    <div class="partner-box">
-                        <i class="fa-brands fa-microsoft"></i>
-                        <span>AZURE CORE</span>
-                    </div>
-                    <div class="partner-box">
-                        <i class="fa-solid fa-shield-halved"></i>
-                        <span>FORTINET</span>
-                    </div>
-                    <div class="partner-box">
-                        <i class="fa-solid fa-server"></i>
-                        <span>CISCO SYSTEMS</span>
-                    </div>
-                    <div class="partner-box">
-                        <i class="fa-brands fa-docker"></i>
-                        <span>KUBERNETES</span>
-                    </div>
+                    <div class="partner-box"><i class="fa-brands fa-aws"></i><span>AWS CLOUD</span></div>
+                    <div class="partner-box"><i class="fa-brands fa-microsoft"></i><span>AZURE CORE</span></div>
+                    <div class="partner-box"><i class="fa-solid fa-shield-halved"></i><span>FORTINET</span></div>
+                    <div class="partner-box"><i class="fa-solid fa-server"></i><span>CISCO SYSTEMS</span></div>
+                    <div class="partner-box"><i class="fa-brands fa-docker"></i><span>KUBERNETES</span></div>
                 </div>
             </div>
         </section>
 
-        <!-- 5. DISPATCH GATEWAY / CONTACT FORM -->
+        <!-- DISPATCH GATEWAY / CONTACT FORM -->
         <section id="dispatch" class="dispatch">
             <div class="container dispatch-grid">
                 <div class="dispatch-info">
                     <span class="mono-tag">Portal Initialization</span>
                     <h2>Initialize Upstream Alliance</h2>
-                    <p>Transmit your architectural requirements directly into our active engineering matrix. Let's form an unbeatable structural partnership.</p>
+                    <p>Transmit your architectural requirements directly into our active engineering matrix.</p>
                 </div>
                 <form class="dispatch-form" id="contactForm">
                     <div class="form-row">
@@ -919,7 +473,7 @@
         </section>
     </main>
 
-    <!-- 6. FOOTER -->
+    <!-- FOOTER -->
     <footer>
         <div class="container footer-grid">
             <div class="footer-brand">
@@ -945,7 +499,6 @@
                 <ul class="footer-links">
                     <li><a href="#">Flexible Conduits</a></li>
                     <li><a href="#">Pulse Analytics</a></li>
-                    <li><a href="#">Matrix Firewalls</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -953,7 +506,6 @@
                 <ul class="footer-links">
                     <li><a href="#">Geometry Logs</a></li>
                     <li><a href="#">Upstream Architecture</a></li>
-                    <li><a href="#">SLA Specifications</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -961,7 +513,6 @@
                 <ul class="footer-links">
                     <li><a href="#"><i class="fa-brands fa-github"></i> GitHub Core</a></li>
                     <li><a href="#"><i class="fa-brands fa-linkedin"></i> LinkedIn Gateway</a></li>
-                    <li><a href="#"><i class="fa-brands fa-x-twitter"></i> X Conduits</a></li>
                 </ul>
             </div>
         </div>
@@ -972,12 +523,11 @@
 
     <!-- INTERACTIVE JAVASCRIPT -->
     <script>
-        // --- Dark/Light Theme Switcher with localStorage Memory ---
+        // --- Dark/Light Theme Switcher ---
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeIcon = document.getElementById('themeIcon');
         const themeText = document.getElementById('themeText');
 
-        // Check for saved preference or system preference
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -1003,7 +553,7 @@
             }
         }
 
-        // --- Contact Form Submission Handler ---
+        // --- Contact Form Submission Handler (Prevents Unexpected token 'T' Error) ---
         const contactForm = document.getElementById('contactForm');
         const formStatus = document.getElementById('form-status');
         const submitBtn = document.getElementById('submitBtn');
@@ -1011,7 +561,6 @@
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Clear prior status
             formStatus.className = '';
             formStatus.textContent = 'Transmitting data across conduit...';
             submitBtn.disabled = true;
@@ -1031,7 +580,16 @@
                     body: JSON.stringify(formData)
                 });
 
-                const result = await response.json();
+                // Verify the response header is JSON before attempting to parse
+                const contentType = response.headers.get('content-type');
+                let result;
+
+                if (contentType && contentType.includes('application/json')) {
+                    result = await response.json();
+                } else {
+                    const textResponse = await response.text();
+                    throw new Error(`Server returned non-JSON response (${response.status}): ${textResponse.slice(0, 80)}...`);
+                }
 
                 if (response.ok) {
                     formStatus.className = 'status-success';
